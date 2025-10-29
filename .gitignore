@@ -227,6 +227,4 @@ logs
 test*
 
 populate_test_data.py
-diagnose_llm_async.py
-diagnose_rss_fetch.py
-diagnose_rss_fetch_sync.py
+test/
