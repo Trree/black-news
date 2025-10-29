@@ -1,0 +1,339 @@
+{% extends "base.html" %}
+
+{% block title %}新闻列表 - 黑天鹅新闻监测系统{% endblock %}
+
+{% block content %}
+<!-- 页面标题和描述 -->
+<div style="margin-bottom: 2rem;">
+    <h1 style="color: #2c3e50; margin-bottom: 0.5rem;">新闻列表</h1>
+    <p style="color: #7f8c8d;">浏览所有新闻内容，支持多种筛选和搜索功能</p>
+</div>
+
+<!-- 搜索栏 -->
+<section class="search-section">
+    <div class="search-bar">
+        <form id="searchForm" class="search-form">
+            <input type="text" id="searchInput" class="search-input" placeholder="搜索新闻标题、内容或来源..." name="q" value="{{ request.args.get('q', '') }}">
+            <button type="submit" class="search-button">搜索</button>
+        </form>
+    </div>
+</section>
+
+<!-- 高级筛选 -->
+<section class="advanced-filters" style="background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+    <h3 style="margin-bottom: 1rem; color: #2c3e50;">高级筛选</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <div>
+            <label style="display: block; margin-bottom: 0.5rem; color: #7f8c8d; font-weight: 500;">事件类型</label>
+            <select id="eventTypeFilter" class="search-input" style="width: 100%;">
+                <option value="">全部类型</option>
+                <option value="black_swan">黑天鹅事件</option>
+                <option value="normal">常规事件</option>
+            </select>
+        </div>
+        <div>
+            <label style="display: block; margin-bottom: 0.5rem; color: #7f8c8d; font-weight: 500;">数据源</label>
+            <select id="sourceFilter" class="search-input" style="width: 100%;">
+                <option value="">全部来源</option>
+                <!-- 通过JavaScript动态加载数据源选项 -->
+            </select>
+        </div>
+        <div>
+            <label style="display: block; margin-bottom: 0.5rem; color: #7f8c8d; font-weight: 500;">时间范围</label>
+            <select id="timeRangeFilter" class="search-input" style="width: 100%;">
+                <option value="">全部时间</option>
+                <option value="today">今天</option>
+                <option value="week">本周</option>
+                <option value="month">本月</option>
+            </select>
+        </div>
+        <div>
+            <label style="display: block; margin-bottom: 0.5rem; color: #7f8c8d; font-weight: 500;">排序方式</label>
+            <select id="sortFilter" class="search-input" style="width: 100%;">
+                <option value="date_desc">最新发布</option>
+                <option value="date_asc">最早发布</option>
+                <option value="impact_desc">影响力最高</option>
+                <option value="impact_asc">影响力最低</option>
+            </select>
+        </div>
+    </div>
+    <div style="margin-top: 1rem; text-align: right;">
+        <button id="applyFilters" class="search-button">应用筛选</button>
+        <button id="resetFilters" class="filter-button" style="margin-left: 0.5rem;">重置</button>
+    </div>
+</section>
+
+<!-- 快速筛选 -->
+<section class="filter-section">
+    <div class="filters">
+        <button class="filter-button active" data-filter="all">全部新闻</button>
+        <button class="filter-button" data-filter="black-swan">黑天鹅事件</button>
+        <button class="filter-button" data-filter="recent">最新发布</button>
+        <button class="filter-button" data-filter="trending">高影响力</button>
+    </div>
+</section>
+
+<!-- 统计信息 -->
+<div class="stats-cards" id="listStats" style="margin-bottom: 2rem;">
+    <div class="stat-card">
+        <h3>当前显示</h3>
+        <div class="value" id="currentCount">0</div>
+    </div>
+    <div class="stat-card">
+        <h3>黑天鹅事件</h3>
+        <div class="value" id="blackSwanCount">0</div>
+    </div>
+    <div class="stat-card">
+        <h3>数据源</h3>
+        <div class="value" id="sourceCount">0</div>
+    </div>
+    <div class="stat-card">
+        <h3>更新时间</h3>
+        <div class="value small" id="lastUpdate">-</div>
+    </div>
+</div>
+
+<!-- 新闻列表 -->
+<section class="news-section">
+    <!-- 加载指示器 -->
+    <div class="loading" id="loadingIndicator" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>加载新闻...</p>
+    </div>
+    
+    <!-- 新闻网格 -->
+    <div class="news-grid" id="newsContainer">
+        <!-- 通过JavaScript动态加载新闻 -->
+    </div>
+    
+    <!-- 分页控件 -->
+    <div class="pagination" id="paginationContainer">
+        <!-- 通过JavaScript动态生成分页 -->
+    </div>
+</section>
+
+<!-- 导出功能 -->
+<section class="export-section" style="margin-top: 2rem; text-align: center;">
+    <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <h3 style="margin-bottom: 1rem; color: #2c3e50;">数据导出</h3>
+        <p style="color: #7f8c8d; margin-bottom: 1rem;">将筛选结果导出为CSV格式文件</p>
+        <button id="exportData" class="search-button">导出数据</button>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// 新闻列表页面特定的JavaScript逻辑
+document.addEventListener('DOMContentLoaded', function() {
+    // 初始化高级筛选
+    initAdvancedFilters();
+    
+    // 绑定高级筛选事件
+    document.getElementById('applyFilters').addEventListener('click', applyAdvancedFilters);
+    document.getElementById('resetFilters').addEventListener('click', resetFilters);
+    document.getElementById('exportData').addEventListener('click', exportData);
+    
+    // 加载数据源选项
+    loadSourceOptions();
+});
+
+/**
+ * 初始化高级筛选
+ */
+function initAdvancedFilters() {
+    // 从URL参数恢复筛选状态
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (urlParams.get('event_type')) {
+        document.getElementById('eventTypeFilter').value = urlParams.get('event_type');
+    }
+    if (urlParams.get('source')) {
+        document.getElementById('sourceFilter').value = urlParams.get('source');
+    }
+    if (urlParams.get('time_range')) {
+        document.getElementById('timeRangeFilter').value = urlParams.get('time_range');
+    }
+    if (urlParams.get('sort_by')) {
+        document.getElementById('sortFilter').value = urlParams.get('sort_by');
+    }
+}
+
+/**
+ * 应用高级筛选
+ */
+function applyAdvancedFilters() {
+    const params = {};
+    
+    const eventType = document.getElementById('eventTypeFilter').value;
+    const source = document.getElementById('sourceFilter').value;
+    const timeRange = document.getElementById('timeRangeFilter').value;
+    const sortBy = document.getElementById('sortFilter').value;
+    
+    if (eventType) params.event_type = eventType;
+    if (source) params.source = source;
+    if (timeRange) params.time_range = timeRange;
+    if (sortBy) params.sort_by = sortBy;
+    
+    // 保留搜索关键词
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput && searchInput.value.trim()) {
+        params.search = searchInput.value.trim();
+    }
+    
+    loadNews(params);
+}
+
+/**
+ * 重置筛选
+ */
+function resetFilters() {
+    document.getElementById('eventTypeFilter').value = '';
+    document.getElementById('sourceFilter').value = '';
+    document.getElementById('timeRangeFilter').value = '';
+    document.getElementById('sortFilter').value = 'date_desc';
+    document.getElementById('searchInput').value = '';
+    
+    // 重置快速筛选按钮
+    document.querySelectorAll('.filter-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector('.filter-button[data-filter="all"]').classList.add('active');
+    
+    loadNews();
+}
+
+/**
+ * 加载数据源选项
+ */
+async function loadSourceOptions() {
+    try {
+        const response = await fetch('/api/sources');
+        const sources = await response.json();
+        
+        const sourceSelect = document.getElementById('sourceFilter');
+        sources.forEach(source => {
+            const option = document.createElement('option');
+            option.value = source.name;
+            option.textContent = source.name;
+            sourceSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('加载数据源选项失败:', error);
+    }
+}
+
+/**
+ * 导出数据
+ */
+async function exportData() {
+    try {
+        const currentParams = getCurrentSearchParams();
+        const queryParams = new URLSearchParams(currentParams);
+        
+        // 添加导出标志
+        queryParams.append('export', 'csv');
+        
+        const response = await fetch(`/api/news/export?${queryParams}`);
+        
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `black_swan_news_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showSuccess('数据导出成功');
+        } else {
+            throw new Error('导出失败');
+        }
+    } catch (error) {
+        console.error('导出数据失败:', error);
+        showError('导出数据失败');
+    }
+}
+
+/**
+ * 获取当前搜索参数（包含高级筛选）
+ */
+function getCurrentSearchParams() {
+    const params = {};
+    
+    // 基础搜索
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput && searchInput.value.trim()) {
+        params.search = searchInput.value.trim();
+    }
+    
+    // 高级筛选
+    const eventType = document.getElementById('eventTypeFilter').value;
+    const source = document.getElementById('sourceFilter').value;
+    const timeRange = document.getElementById('timeRangeFilter').value;
+    const sortBy = document.getElementById('sortFilter').value;
+    
+    if (eventType) params.event_type = eventType;
+    if (source) params.source = source;
+    if (timeRange) params.time_range = timeRange;
+    if (sortBy) params.sort_by = sortBy;
+    
+    // 快速筛选
+    const activeFilter = document.querySelector('.filter-button.active');
+    if (activeFilter) {
+        const filterType = activeFilter.dataset.filter;
+        switch(filterType) {
+            case 'black-swan':
+                params.black_swan_only = true;
+                break;
+            case 'recent':
+                params.sort_by = 'date_desc';
+                break;
+            case 'trending':
+                params.sort_by = 'impact_desc';
+                break;
+        }
+    }
+    
+    return params;
+}
+
+// 重写新闻加载后的回调以更新列表统计
+const originalUpdateNewsDisplay = window.BlackSwanNews.updateNewsDisplay;
+window.BlackSwanNews.updateNewsDisplay = function(data) {
+    originalUpdateNewsDisplay(data);
+    updateListStats(data);
+};
+
+/**
+ * 更新列表统计信息
+ */
+function updateListStats(data) {
+    const currentCount = document.getElementById('currentCount');
+    const blackSwanCount = document.getElementById('blackSwanCount');
+    const sourceCount = document.getElementById('sourceCount');
+    const lastUpdate = document.getElementById('lastUpdate');
+    
+    if (currentCount) {
+        currentCount.textContent = data.total_count || 0;
+    }
+    if (blackSwanCount) {
+        // 计算黑天鹅事件数量
+        const blackSwanCountValue = data.news ? data.news.filter(news => 
+            news.analysis_result && news.analysis_result.is_black_swan
+        ).length : 0;
+        blackSwanCount.textContent = blackSwanCountValue;
+    }
+    if (sourceCount) {
+        // 计算唯一数据源数量
+        const uniqueSources = data.news ? new Set(data.news.map(news => news.source_name)).size : 0;
+        sourceCount.textContent = uniqueSources;
+    }
+    if (lastUpdate) {
+        lastUpdate.textContent = new Date().toLocaleTimeString('zh-CN');
+    }
+}
+</script>
+{% endblock %}

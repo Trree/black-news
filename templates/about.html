@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block title %}关于我们 - 黑天鹅新闻监测系统{% endblock %}
+
+{% block content %}
+<!-- 页面标题和描述 -->
+<div style="margin-bottom: 2rem;">
+    <h1 style="color: #2c3e50; margin-bottom: 0.5rem;">关于我们</h1>
+    <p style="color: #7f8c8d;">了解黑天鹅新闻监测系统的技术原理和价值</p>
+</div>
+
+<!-- 项目介绍 -->
+<section class="project-intro" style="margin-bottom: 3rem;">
+    <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #2c3e50; margin-bottom: 1rem;">项目简介</h2>
+        <p style="line-height: 1.6; color: #555; margin-bottom: 1.5rem;">
+            黑天鹅新闻监测系统是一个基于人工智能技术的新闻分析与风险预警平台。系统通过实时监控多个新闻源，
+            运用大语言模型分析新闻内容，识别具有黑天鹅事件特征的高风险新闻，为决策者提供早期预警。
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            <div>
+                <h3 style="color: #e74c3c; margin-bottom: 1rem;">🎯 项目目标</h3>
+                <ul style="line-height: 1.6; color: #555; margin-left: 1rem;">
+                    <li>实时监测全球重要新闻事件</li>
+                    <li>AI识别潜在的黑天鹅事件</li>
+                    <li>提供风险评估和预警服务</li>
+                    <li>辅助决策制定和风险管理</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="color: #e74c3c; margin-bottom: 1rem;">🚀 技术特点</h3>
+                <ul style="line-height: 1.6; color: #555; margin-left: 1rem;">
+                    <li>多源RSS数据采集</li>
+                    <li>基于LiteLLM的AI分析</li>
+                    <li>实时数据处理管道</li>
+                    <li>响应式Web界面</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 技术架构 -->
+<section class="tech-architecture" style="margin-bottom: 3rem;">
+    <h2 style="color: #2c3e50; margin-bottom: 1.5rem;">技术架构</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        <!-- 数据采集层 -->
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 2.5rem; color: #3498db;">📡</div>
+            </div>
+            <h3 style="color: #2c3e50; margin-bottom: 1rem; text-align: center;">数据采集层</h3>
+            <ul style="line-height: 1.6; color: #555;">
+                <li><strong>RSS源监控：</strong>多源新闻数据实时采集</li>
+                <li><strong>去重机制：</strong>基于内容相似度的去重</li>
+                <li><strong>错误处理：</strong>自动重试和故障恢复</li>
+                <li><strong>数据清洗：</strong>标准化和格式化处理</li>
+            </ul>
+        </div>
+        
+        <!-- AI分析层 -->
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 2.5rem; color: #e74c3c;">🤖</div>
+            </div>
+            <h3 style="color: #2c3e50; margin-bottom: 1rem; text-align: center;">AI分析层</h3>
+            <ul style="line-height: 1.6; color: #555;">
+                <li><strong>大语言模型：</strong>基于LiteLLM的多模型支持</li>
+                <li><strong>事件识别：</strong>黑天鹅事件特征分析</li>
+                <li><strong>置信度评估：</strong>风险等级量化评估</li>
+                <li><strong>推理过程：</strong>可解释的分析理由</li>
+            </ul>
+        </div>
+        
+        <!-- 数据存储层 -->
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 2.5rem; color: #27ae60;">💾</div>
+            </div>
+            <h3 style="color: #2c3e50; margin-bottom: 1rem; text-align: center;">数据存储层</h3>
+            <ul style="line-height: 1.6; color: #555;">
+                <li><strong>SQLite数据库：</strong>轻量级数据存储</li>
+                <li><strong>结构化存储：</strong>新闻、分析结果、配置数据</li>
+                <li><strong>查询优化：</strong>高效的数据检索</li>
+                <li><strong>数据备份：</strong>定期备份和恢复机制</li>
+            </ul>
+        </div>
+        
+        <!-- 应用展示层 -->
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 2.5rem; color: #f39c12;">🌐</div>
+            </div>
+            <h3 style="color: #2c3e50; margin-bottom: 1rem; text-align: center;">应用展示层</h3>
+            <ul style="line-height: 1.6; color: #555;">
+                <li><strong>Flask框架：</strong>Python Web应用框架</li>
+                <li><strong>RESTful API：</strong>标准化的数据接口</li>
+                <li><strong>响应式设计：</strong>多设备兼容的界面</li>
+                <li><strong>实时更新：</strong>AJAX异步数据加载</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- 核心算法 -->
+<section class="core-algorithm" style="margin-bottom: 3rem;">
+    <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #2c3e50; margin-bottom: 1rem;">核心算法原理</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            <div>
+                <h3 style="color: #e74c3c; margin-bottom: 1rem;">🔍 黑天鹅事件识别</h3>
+                <p style="line-height: 1.6; color: #555;">
+                    系统基于纳西姆·塔勒布的黑天鹅理论，通过AI模型分析新闻事件是否满足以下特征：
+                </p>
+                <ul style="line-height: 1.6; color: #555; margin-left: 1rem;">
+                    <li><strong>意外性：</strong>事件超出正常预期范围</li>
+                    <li><strong>极端影响：</strong>可能产生重大后果</li>
+                    <li><strong>事后可解释性：</strong>事后看来本可预测</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 style="color: #e74c3c; margin-bottom: 1rem;">📊 风险评估模型</h3>
+                <p style="line-height: 1.6; color: #555;">
+                    系统采用多维度评估方法计算事件风险：
+                </p>
+                <ul style="line-height: 1.6; color: #555; margin-left: 1rem;">
+                    <li><strong>置信度评分：</strong>0-100%的概率评估</li>
+                    <li><strong>影响范围：</strong>地理、行业、人群影响</li>
+                    <li><strong>时效性：</strong>事件发展的紧急程度</li>
+                    <li><strong>可信度：</strong>信息来源的权威性</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem; background: #f8f9fa; padding: 1.5rem; border-radius: 4px;">
+            <h4 style="color: #2c3e50; margin-bottom: 1rem;">算法流程图</h4>
+            <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                <p>数据采集 → 内容解析 → AI分析 → 风险评估 → 结果展示</p>
+                <p style="font-size: 0.9rem; margin-top: 1rem;">每个环节都有相应的质量控制和错误处理机制</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 技术栈 -->
+<section class="tech-stack" style="margin-bottom: 3rem;">
+    <h2 style="color: #2c3e50; margin-bottom: 1.5rem;">技术栈</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center;">
+            <div style="font-size: 2rem; color: #3776ab; margin-bottom: 0.5rem;">🐍</div>
+            <h4 style="color: #2c3e50;">Python 3.9+</h4>
+            <p style="color: #7f8c8d; font-size: 0.9rem;">后端开发语言</p>
+        </div>
+        
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center;">
+            <div style="font-size: 2rem; color: #000000; margin-bottom: 0.5rem;">🌶</div>
+            <h4 style="color: #2c3e50;">Flask</h4>
+            <p style="color: #7f8c8d; font-size: 0.9rem;">Web框架</p>
+        </div>
+        
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center;">
+            <div style="font-size: 2rem; color: #003B57; margin-bottom: 0.5rem;">🗄</div>
+            <h4 style="color: #2c3e50;">SQLite</h4>
+            <p style="color: #7f8c8d; font-size: 0.9rem;">数据库</p>
+        </div>
+        
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center;">
+            <div style="font-size: 2rem; color: #F7DF1E; margin-bottom: 0.5rem;">⚡</div>
+            <h4 style="color: #2c3e50;">JavaScript</h4>
+            <p style="color: #7f8c8d; font-size: 0.9rem;">前端交互</p>
+        </div>
+        
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center;">
+            <div style="font-size: 2rem; color: #1572B6; margin-bottom: 0.5rem;">🎨</div>
+            <h4 style="color: #2c3e50;">CSS3</h4>
+            <p style="color: #7f8c8d; font-size: 0.9rem;">样式设计</p>
+        </div>
+        
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center;">
+            <div style="font-size: 2rem; color: #FF6B35; margin-bottom: 0.5rem;">🧠</div>
+            <h4 style="color: #2c3e50;">LiteLLM</h4>
+            <p style="color: #7f8c8d; font-size: 0.9rem;">AI模型接口</p>
+        </div>
+    </div>
+</section>
+
+<!-- 使用指南 -->
+<section class="usage-guide" style="margin-bottom: 3rem;">
+    <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #2c3e50; margin-bottom: 1rem;">使用指南</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            <div>
+                <h3 style="color: #e74c3c; margin-bottom: 1rem;">📖 快速开始</h3>
+                <ol style="line-height: 1.6; color: #555; margin-left: 1rem;">
+                    <li>配置RSS数据源和AI模型参数</li>
+                    <li>启动系统监控服务</li>
+                    <li>浏览首页查看最新新闻</li>
+                    <li>使用筛选功能查找特定事件</li>
+                    <li>查看详细分析结果和风险评估</li>
+                </ol>
+            </div>
+            
+            <div>
+                <h3 style="color: #e74c3c; margin-bottom: 1rem;">⚙️ 配置说明</h3>
+                <ul style="line-height: 1.6; color: #555; margin-left: 1rem;">
+                    <li><strong>环境变量：</strong>配置AI模型和数据库参数</li>
+                    <li><strong>RSS源配置：</strong>JSON格式的数据源列表</li>
+                    <li><strong>系统设置：</strong>更新间隔、监控范围等</li>
+                    <li><strong>自定义规则：</strong>特定事件的关注规则</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 联系我们 -->
+<section class="contact-section">
+    <div style="background: #2c3e50; color: white; padding: 2rem; border-radius: 8px;">
+        <h2 style="margin-bottom: 1rem;">联系我们</h2>
+        <p style="margin-bottom: 1.5rem; opacity: 0.9;">
+            如果您对黑天鹅新闻监测系统有任何疑问或建议，欢迎通过以下方式联系我们：
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📧</div>
+                <h4>技术支持</h4>
+                <p style="opacity: 0.8; font-size: 0.9rem;">tech@blackswan-news.com</p>
+            </div>
+            
+            <div style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+                <h4>问题反馈</h4>
+                <p style="opacity: 0.8; font-size: 0.9rem;">feedback@blackswan-news.com</p>
+            </div>
+            
+            <div style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔧</div>
+                <h4>定制开发</h4>
+                <p style="opacity: 0.8; font-size: 0.9rem;">custom@blackswan-news.com</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.2); text-align: center;">
+            <p style="opacity: 0.8; font-size: 0.9rem;">
+                我们致力于通过技术手段帮助用户更好地理解和应对不确定性风险
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// 关于页面特定的JavaScript逻辑
+document.addEventListener('DOMContentLoaded', function() {
+    // 可以在这里添加页面特定的交互逻辑
+    console.log('关于页面加载完成');
+    
+    // 示例：添加技术栈卡片的悬停效果
+    const techCards = document.querySelectorAll('.tech-stack > div > div');
+    techCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+
+<style>
+.tech-stack > div > div {
+    transition: all 0.3s ease;
+}
+
+.tech-stack > div > div:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+
+{% block title %}黑天鹅事件 - 黑天鹅新闻监测系统{% endblock %}
+
+{% block content %}
+<!-- 页面标题和描述 -->
+<div style="margin-bottom: 2rem;">
+    <h1 style="color: #2c3e50; margin-bottom: 0.5rem;">黑天鹅事件</h1>
+    <p style="color: #7f8c8d;">AI识别的高风险、低概率、大影响事件分析</p>
+</div>
+
+<!-- 风险等级说明 -->
+<section class="risk-levels" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+    <h3 style="color: #2c3e50; margin-bottom: 1rem;">风险等级说明</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+            <div style="width: 20px; height: 20px; background: #e74c3c; border-radius: 50%; margin: 0 auto 0.5rem;"></div>
+            <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">高风险</h4>
+            <p style="color: #7f8c8d; font-size: 0.9rem;">置信度 ≥ 80%</p>
+        </div>
+        <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+            <div style="width: 20px; height: 20px; background: #f39c12; border-radius: 50%; margin: 0 auto 0.5rem;"></div>
+            <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">中风险</h4>
+            <p style="color: #7f8c8d; font-size: 0.9rem;">置信度 60-79%</p>
+        </div>
+        <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+            <div style="width: 20px; height: 20px; background: #f1c40f; border-radius: 50%; margin: 0 auto 0.5rem;"></div>
+            <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">低风险</h4>
+            <p style="color: #7f8c8d; font-size: 0.9rem;">置信度 40-59%</p>
+        </div>
+        <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+            <div style="width: 20px; height: 20px; background: #27ae60; border-radius: 50%; margin: 0 auto 0.5rem;"></div>
+            <h4 style="color: #2c3e50; margin-bottom: 0.5rem;">已确认</h4>
+            <p style="color: #7f8c8d; font-size: 0.9rem;">人工验证通过</p>
+        </div>
+    </div>
+</section>
+
+<!-- 搜索和筛选 -->
+<section class="search-section">
+    <div class="search-bar">
+        <form id="searchForm" class="search-form">
+            <input type="text" id="searchInput" class="search-input" placeholder="搜索黑天鹅事件..." name="q">
+            <button type="submit" class="search-button">搜索</button>
+        </form>
+    </div>
+</section>
+
+<!-- 风险等级筛选 -->
+<section class="filter-section">
+    <div class="filters">
+        <button class="filter-button active" data-risk-level="all">全部风险</button>
+        <button class="filter-button" data-risk-level="high">高风险</button>
+        <button class="filter-button" data-risk-level="medium">中风险</button>
+        <button class="filter-button" data-risk-level="low">低风险</button>
+        <button class="filter-button" data-risk-level="confirmed">已确认</button>
+    </div>
+</section>
+
+<!-- 统计信息 -->
+<div class="stats-cards" id="blackSwanStats" style="margin-bottom: 2rem;">
+    <div class="stat-card">
+        <h3>黑天鹅事件总数</h3>
+        <div class="value" id="totalBlackSwan">0</div>
+    </div>
+    <div class="stat-card">
+        <h3>高风险事件</h3>
+        <div class="value" id="highRiskCount">0</div>
+    </div>
+    <div class="stat-card">
+        <h3>本周新增</h3>
+        <div class="value" id="weeklyCount">0</div>
+    </div>
+    <div class="stat-card">
+        <h3>平均置信度</h3>
+        <div class="value small" id="avgConfidence">0%</div>
+    </div>
+</div>
+
+<!-- 黑天鹅事件列表 -->
+<section class="black-swan-section">
+    <!-- 加载指示器 -->
+    <div class="loading" id="loadingIndicator" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>加载黑天鹅事件...</p>
+    </div>
+    
+    <!-- 事件列表 -->
+    <div id="blackSwanContainer">
+        <!-- 通过JavaScript动态加载黑天鹅事件 -->
+    </div>
+    
+    <!-- 分页控件 -->
+    <div class="pagination" id="paginationContainer">
+        <!-- 通过JavaScript动态生成分页 -->
+    </div>
+</section>
+
+<!-- 黑天鹅事件定义说明 -->
+<section class="definition-section" style="margin-top: 3rem; padding: 2rem; background: #f8f9fa; border-radius: 8px;">
+    <h2 style="color: #2c3e50; margin-bottom: 1rem;">什么是黑天鹅事件？</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+        <div>
+            <h3 style="color: #e74c3c; margin-bottom: 1rem;">定义</h3>
+            <p style="line-height: 1.6; color: #555;">
+                黑天鹅事件是指满足以下三个特征的事件：
+            </p>
+            <ul style="line-height: 1.6; color: #555; margin-left: 1rem;">
+                <li><strong>意外性：</strong>事件发生超出正常预期范围</li>
+                <li><strong>影响重大：</strong>事件会产生极端影响</li>
+                <li><strong>事后可解释性：</strong>事后看来，事件本可预测</li>
+            </ul>
+        </div>
+        <div>
+            <h3 style="color: #e74c3c; margin-bottom: 1rem;">典型例子</h3>
+            <ul style="line-height: 1.6; color: #555; margin-left: 1rem;">
+                <li>2008年全球金融危机</li>
+                <li>9/11恐怖袭击事件</li>
+                <li>COVID-19疫情爆发</li>
+                <li>互联网的兴起</li>
+            </ul>
+        </div>
+        <div>
+            <h3 style="color: #e74c3c; margin-bottom: 1rem;">监测意义</h3>
+            <p style="line-height: 1.6; color: #555;">
+                通过AI技术早期识别潜在的黑天鹅事件，可以帮助决策者：
+            </p>
+            <ul style="line-height: 1.6; color: #555; margin-left: 1rem;">
+                <li>提前制定应急预案</li>
+                <li>降低潜在损失</li>
+                <li>把握潜在机会</li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// 黑天鹅事件页面特定的JavaScript逻辑
+document.addEventListener('DOMContentLoaded', function() {
+    // 绑定风险等级筛选事件
+    document.querySelectorAll('.filter-button[data-risk-level]').forEach(button => {
+        button.addEventListener('click', handleRiskLevelFilter);
+    });
+    
+    // 加载黑天鹅事件统计
+    loadBlackSwanStats();
+    
+    // 加载黑天鹅事件列表
+    loadBlackSwanEvents();
+});
+
+/**
+ * 处理风险等级筛选
+ */
+function handleRiskLevelFilter(e) {
+    const button = e.currentTarget;
+    const riskLevel = button.dataset.riskLevel;
+    
+    // 更新活跃状态
+    document.querySelectorAll('.filter-button[data-risk-level]').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    button.classList.add('active');
+    
+    // 根据风险等级加载事件
+    loadBlackSwanEvents({ risk_level: riskLevel });
+}
+
+/**
+ * 加载黑天鹅事件统计
+ */
+async function loadBlackSwanStats() {
+    try {
+        const response = await fetch('/api/stats/black-swan');
+        const stats = await response.json();
+        
+        updateBlackSwanStats(stats);
+    } catch (error) {
+        console.error('加载黑天鹅统计失败:', error);
+    }
+}
+
+/**
+ * 更新黑天鹅统计显示
+ */
+function updateBlackSwanStats(stats) {
+    const totalBlackSwan = document.getElementById('totalBlackSwan');
+    const highRiskCount = document.getElementById('highRiskCount');
+    const weeklyCount = document.getElementById('weeklyCount');
+    const avgConfidence = document.getElementById('avgConfidence');
+    
+    if (totalBlackSwan) totalBlackSwan.textContent = stats.total_black_swan || 0;
+    if (highRiskCount) highRiskCount.textContent = stats.high_risk_count || 0;
+    if (weeklyCount) weeklyCount.textContent = stats.weekly_count || 0;
+    if (avgConfidence) avgConfidence.textContent = `${Math.round(stats.avg_confidence || 0)}%`;
+}
+
+/**
+ * 加载黑天鹅事件列表
+ */
+async function loadBlackSwanEvents(params = {}) {
+    const container = document.getElementById('blackSwanContainer');
+    const loadingElement = document.getElementById('loadingIndicator');
+    
+    if (loadingElement) {
+        loadingElement.style.display = 'block';
+    }
+    if (container) {
+        container.innerHTML = '';
+    }
+    
+    try {
+        // 构建查询参数
+        const queryParams = new URLSearchParams();
+        queryParams.append('black_swan_only', 'true');
+        
+        Object.keys(params).forEach(key => {
+            if (params[key] !== undefined && params[key] !== null) {
+                queryParams.append(key, params[key]);
+            }
+        });
+        
+        const response = await fetch(`/api/news?${queryParams}`);
+        const data = await response.json();
+        
+        updateBlackSwanDisplay(data);
+        updatePagination(data.pagination);
+        
+    } catch (error) {
+        console.error('加载黑天鹅事件失败:', error);
+        showError('加载黑天鹅事件失败');
+    } finally {
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+        }
+    }
+}
+
+/**
+ * 更新黑天鹅事件显示
+ */
+function updateBlackSwanDisplay(data) {
+    const container = document.getElementById('blackSwanContainer');
+    if (!container) return;
+    
+    if (!data.news || data.news.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                <h3>暂无黑天鹅事件</h3>
+                <p>系统正在持续监测中，请稍后再查看</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const eventsHTML = data.news.map(event => createBlackSwanCard(event)).join('');
+    container.innerHTML = eventsHTML;
+}
+
+/**
+ * 创建黑天鹅事件卡片HTML
+ */
+function createBlackSwanCard(event) {
+    const publishedDate = new Date(event.published_at).toLocaleDateString('zh-CN');
+    const confidence = event.analysis_result ? Math.round(event.analysis_result.confidence * 100) : 0;
+    
+    // 根据置信度确定风险等级和样式
+    let riskLevel = 'low';
+    let riskColor = '#f1c40f';
+    let riskText = '低风险';
+    
+    if (confidence >= 80) {
+        riskLevel = 'high';
+        riskColor = '#e74c3c';
+        riskText = '高风险';
+    } else if (confidence >= 60) {
+        riskLevel = 'medium';
+        riskColor = '#f39c12';
+        riskText = '中风险';
+    }
+    
+    // 检查是否已确认
+    const isConfirmed = event.analysis_result && event.analysis_result.verified;
+    if (isConfirmed) {
+        riskLevel = 'confirmed';
+        riskColor = '#27ae60';
+        riskText = '已确认';
+    }
+    
+    return `
+        <div class="news-card black-swan-card" data-news-id="${event.id}" data-risk-level="${riskLevel}">
+            <div class="news-card-header" style="border-left: 4px solid ${riskColor};">
+                <h3 class="news-card-title">${escapeHtml(event.title)}</h3>
+                <div class="news-card-source">
+                    <span class="news-card-source-name">${escapeHtml(event.source_name)}</span>
+                    <span class="news-card-date">${publishedDate}</span>
+                </div>
+            </div>
+            ${event.image_url ? `<img src="${event.image_url}" alt="${escapeHtml(event.title)}" class="news-card-image" onerror="this.style.display='none'">` : ''}
+            <div class="news-card-content">
+                <p class="news-card-summary">${escapeHtml(event.summary || '暂无摘要')}</p>
+                
+                <!-- AI分析结果 -->
+                ${event.analysis_result ? `
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div>
+                                <strong>风险等级:</strong> 
+                                <span style="color: ${riskColor}; font-weight: 600;">${riskText}</span>
+                            </div>
+                            <div>
+                                <strong>置信度:</strong> 
+                                <span style="font-weight: 600;">${confidence}%</span>
+                            </div>
+                        </div>
+                        ${event.analysis_result.reasoning ? `
+                            <div>
+                                <strong>分析理由:</strong>
+                                <p style="margin-top: 0.5rem; line-height: 1.4; font-size: 0.9rem;">${escapeHtml(event.analysis_result.reasoning)}</p>
+                            </div>
+                        ` : ''}
+                        ${isConfirmed ? `
+                            <div style="margin-top: 0.5rem;">
+                                <span style="background: #27ae60; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">✓ 人工验证通过</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                ` : ''}
+            </div>
+            <div class="news-card-footer">
+                <div class="news-card-meta">
+                    <span class="black-swan-badge" style="background: ${riskColor};">${riskText}</span>
+                </div>
+                <div>
+                    <a href="${event.url}" target="_blank" class="search-button" style="padding: 0.25rem 0.5rem; font-size: 0.9rem; margin-right: 0.5rem;">阅读原文</a>
+                    <button class="filter-button verify-button" data-news-id="${event.id}" style="padding: 0.25rem 0.5rem; font-size: 0.9rem;">标记验证</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * 标记事件为已验证
+ */
+async function verifyEvent(newsId) {
+    try {
+        const response = await fetch(`/api/news/${newsId}/verify`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        if (response.ok) {
+            showSuccess('事件标记为已验证');
+            // 重新加载事件列表
+            loadBlackSwanEvents();
+        } else {
+            throw new Error('验证失败');
+        }
+    } catch (error) {
+        console.error('标记验证失败:', error);
+        showError('标记验证失败');
+    }
+}
+
+// 绑定验证按钮事件
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('verify-button')) {
+        const newsId = e.target.dataset.newsId;
+        verifyEvent(newsId);
+    }
+});
+
+// 重写分页处理以使用黑天鹅事件加载
+function handlePagination(button) {
+    const page = parseInt(button.dataset.page);
+    const currentParams = getCurrentBlackSwanParams();
+    
+    loadBlackSwanEvents({ ...currentParams, page: page });
+}
+
+/**
+ * 获取当前黑天鹅事件搜索参数
+ */
+function getCurrentBlackSwanParams() {
+    const params = {};
+    
+    // 搜索关键词
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput && searchInput.value.trim()) {
+        params.search = searchInput.value.trim();
+    }
+    
+    // 风险等级筛选
+    const activeRiskFilter = document.querySelector('.filter-button[data-risk-level].active');
+    if (activeRiskFilter && activeRiskFilter.dataset.riskLevel !== 'all') {
+        params.risk_level = activeRiskFilter.dataset.riskLevel;
+    }
+    
+    return params;
+}
+</script>
+
+<style>
+.black-swan-card {
+    border: 1px solid #e74c3c;
+    box-shadow: 0 2px 10px rgba(231, 76, 60, 0.1);
+}
+
+.black-swan-card:hover {
+    box-shadow: 0 5px 20px rgba(231, 76, 60, 0.15);
+}
+
+.verify-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.verify-button:hover {
+    background-color: #2980b9;
+}
+</style>
+{% endblock %}

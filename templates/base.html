@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}黑天鹅新闻监测系统{% endblock %}</title>
+    
+    <!-- CSS样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- 图标 -->
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+    
+    <!-- 元数据 -->
+    <meta name="description" content="黑天鹅新闻监测系统 - 实时监测和分析潜在的黑天鹅事件">
+    <meta name="keywords" content="黑天鹅,新闻监测,AI分析,风险预警">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- 头部 -->
+    <header class="header">
+        <div class="header-content">
+            <h1>黑天鹅<span class="highlight">新闻</span>监测系统</h1>
+            <div class="header-stats" id="headerStats">
+                <!-- 通过JavaScript动态加载头部统计 -->
+            </div>
+        </div>
+    </header>
+
+    <!-- 导航栏 -->
+    <nav class="nav">
+        <div class="nav-content">
+            <ul>
+                <li><a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">首页</a></li>
+                <li><a href="{{ url_for('news_list') }}" class="{% if request.endpoint == 'news_list' %}active{% endif %}">新闻列表</a></li>
+                <li><a href="{{ url_for('black_swan_news') }}" class="{% if request.endpoint == 'black_swan_news' %}active{% endif %}">黑天鹅事件</a></li>
+                <li><a href="{{ url_for('sources') }}" class="{% if request.endpoint == 'sources' %}active{% endif %}">数据源</a></li>
+                <li><a href="{{ url_for('about') }}" class="{% if request.endpoint == 'about' %}active{% endif %}">关于</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <!-- 闪存消息 -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- 页面特定内容 -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 黑天鹅新闻监测系统. 基于AI技术的新闻分析与风险预警平台.</p>
+            <p>数据来源: 各大新闻媒体RSS源 | 分析引擎: LiteLLM</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
