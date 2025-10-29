@@ -60,9 +60,7 @@ class GPTBlackSwanClassifier:
                 temperature=0.1,
                 response_format={"type": "json_object"}
             )
-
-            result = response.choices[0].message.content
-            return self._parse_response(result)
+            return response.choices[0].message.content
 
         except Exception as e:
             print(f"OpenAI API调用失败: {e}")
@@ -87,30 +85,6 @@ class GPTBlackSwanClassifier:
         prompt += "\n请分析这条新闻是否属于黑天鹅事件，并给出详细的分析。"
         return prompt
 
-    def _parse_response(self, response_text: str) -> Dict:
-        """解析GPT响应"""
-        try:
-            # 清理响应文本，确保是有效的JSON
-            cleaned_text = response_text.strip()
-            if cleaned_text.startswith('```json'):
-                cleaned_text = cleaned_text[7:]
-            if cleaned_text.endswith('```'):
-                cleaned_text = cleaned_text[:-3]
-
-            result = json.loads(cleaned_text)
-
-            # 验证必需字段
-            required_fields = ['is_black_swan', 'confidence_score', 'reasoning']
-            for field in required_fields:
-                if field not in result:
-                    raise ValueError(f"Missing required field: {field}")
-
-            return result
-
-        except (json.JSONDecodeError, ValueError) as e:
-            print(f"解析GPT响应失败: {e}")
-            print(f"原始响应: {response_text}")
-            return self._get_fallback_response("", "")
 
     def _get_fallback_response(self, title: str, content: str) -> Dict:
         """备用的基于规则的响应"""

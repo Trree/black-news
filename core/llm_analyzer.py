@@ -112,25 +112,13 @@ class LLMAnalyzer:
         """分析单条新闻"""
         try:
             self.logger.info(f"开始分析新闻: {news.title[:50]}...")
-
             classifier = GPTBlackSwanClassifier()
             test_title = news.title
             test_content = news.content
-            analysis_result = classifier.analyze_news_sync(test_title, test_content)
-
-            # # 1. 准备分析内容
-            # analysis_content = self._prepare_analysis_content(news)
-            #
-            # # 2. 调用LLM API
-            # llm_response = await self._call_llm_api(analysis_content)
-            #
-            # # 3. 解析响应
-            # analysis_result = self._parse_llm_response(llm_response)
-            
-            # 4. 验证结果
+            llm_response = classifier.analyze_news_sync(test_title, test_content)
+            analysis_result = self._parse_llm_response(llm_response)
             self._validate_analysis_result(analysis_result)
-            
-            # 5. 保存结果
+
             if self.db_manager:
                 await self._save_analysis_result(news.id, analysis_result)
             
@@ -139,91 +127,6 @@ class LLMAnalyzer:
             
         except Exception as e:
             self.logger.error(f"新闻分析失败 {news.title[:50]}...: {str(e)}")
-
-    
-#     def _prepare_analysis_content(self, news):
-#         """准备分析内容"""
-#         # 从环境变量获取提示词模板，如果没有则使用默认值
-#         prompt_template = os.getenv('ANALYSIS_PROMPT_TEMPLATE')
-#         if not prompt_template:
-#             prompt_template = """请分析以下新闻内容，判断其是否属于黑天鹅事件。黑天鹅事件具有以下特征：
-# 1. 意外性：事件出乎意料，超出正常预期范围
-# 2. 重大影响：对经济、社会或市场产生重大冲击
-# 3. 事后可解释性：事后人们会为它的发生编造理由
-#
-# 请从以下维度分析：
-# - 意外程度（1-10分）：事件发生的不可预测程度
-# - 潜在影响范围（1-10分）：事件可能产生的广泛影响
-# - 是否是黑天鹅事件（是/否）：综合判断
-# - 简要分析理由：基于黑天鹅特征的分析
-#
-# 请以JSON格式返回分析结果：
-# {
-#     "surprise_score": 数字,
-#     "impact_score": 数字,
-#     "is_black_swan": 布尔值,
-#     "analysis_reason": "分析理由文本",
-#     "confidence": 0.0到1.0的置信度
-# }
-#
-# 新闻内容：{news_content}"""
-#
-#         # 构建新闻内容
-#         news_content = f"""
-# 标题: {news.title}
-#
-# 摘要: {news.summary}
-#
-# 内容: {news.content[:2000]}  # 限制内容长度
-# """
-#
-#         # 填充提示词模板
-#         analysis_prompt = prompt_template.format(news_content=news_content)
-#
-#         return {
-#             'messages': [
-#                 {
-#                     'role': 'system',
-#                     'content': '你是一个专业的金融风险分析师，专门识别黑天鹅事件。请严格按照要求的JSON格式返回分析结果。'
-#                 },
-#                 {
-#                     'role': 'user',
-#                     'content': analysis_prompt
-#                 }
-#             ]
-#         }
-    
-    # async def _call_llm_api(self, analysis_content):
-    #     """调用LLM API"""
-    #     try:
-    #         # 使用LiteLLM进行调用
-    #         response = await self.client.completion(
-    #                 model=self.model,
-    #                 messages=analysis_content['messages'],
-    #                 max_tokens=1000,
-    #                 temperature=0.1,
-    #                 api_base=self.api_base,
-    #                 api_key=self.api_key,
-    #
-    #         )
-    #
-    #         if not response or not hasattr(response, 'choices') or not response.choices:
-    #             raise LLMAPIError("LLM API返回空响应")
-    #         print("response:", response)
-    #         return response.choices[0].message.content
-    #
-    #     except Exception as e:
-    #         error_msg = str(e)
-    #
-    #         # 分类错误类型
-    #         if "rate limit" in error_msg.lower():
-    #             raise LLMRateLimitError(f"API速率限制: {error_msg}")
-    #         elif "timeout" in error_msg.lower():
-    #             raise LLMTimeoutError(f"API超时: {error_msg}")
-    #         elif "authentication" in error_msg.lower() or "api key" in error_msg.lower():
-    #             raise LLMAuthError(f"API认证失败: {error_msg}")
-    #         else:
-    #             raise LLMAPIError(f"API调用失败: {error_msg}")
 
     def _parse_llm_response(self, llm_response):
         """解析LLM响应"""
@@ -302,26 +205,6 @@ class LLMAnalyzer:
         """同步分析新闻（用于非异步环境）"""
         import asyncio
         return asyncio.run(self._call_llm_api(content))
-
-# 重试装饰器
-def retry_on_failure(max_retries=3, delay=2, exceptions=(Exception,)):
-    def decorator(func):
-        async def wrapper(*args, **kwargs):
-            last_exception = None
-            for attempt in range(max_retries + 1):
-                try:
-                    return await func(*args, **kwargs)
-                except exceptions as e:
-                    last_exception = e
-                    if attempt < max_retries:
-                        await asyncio.sleep(delay * (2 ** attempt))  # 指数退避
-                    else:
-                        break
-            raise last_exception
-        return wrapper
-    return decorator
-
-
 
 if __name__ == "__main__":
     pass
